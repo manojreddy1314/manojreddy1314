@@ -228,6 +228,80 @@ export default function TrivixWebsite() {
   const [animatedStats, setAnimatedStats] = useState([0, 0, 0, 0])
   const statsRef = useRef<HTMLDivElement>(null)
 
+  const [showResumeModal, setShowResumeModal] = useState(false)
+  const [resumeForm, setResumeForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    position: "",
+    message: "",
+    resume: null as File | null,
+  })
+  const [resumeSubmitting, setResumeSubmitting] = useState(false)
+  const [resumeMessage, setResumeMessage] = useState("")
+
+  const handleResumeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!resumeForm.name || !resumeForm.email || !resumeForm.resume) {
+      setResumeMessage("Please fill in all required fields and select a resume file.")
+      return
+    }
+
+    setResumeSubmitting(true)
+    setResumeMessage("")
+
+    try {
+      const formData = new FormData()
+      formData.append("name", resumeForm.name)
+      formData.append("email", resumeForm.email)
+      formData.append("phone", resumeForm.phone)
+      formData.append("position", resumeForm.position)
+      formData.append("message", resumeForm.message)
+      formData.append("resume", resumeForm.resume)
+
+      const response = await fetch("/api/resume", {
+        method: "POST",
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setResumeMessage("Resume submitted successfully! We will review your application and get back to you soon.")
+        setResumeForm({
+          name: "",
+          email: "",
+          phone: "",
+          position: "",
+          message: "",
+          resume: null,
+        })
+        setTimeout(() => {
+          setShowResumeModal(false)
+          setResumeMessage("")
+        }, 3000)
+      } else {
+        setResumeMessage(data.error || "Failed to submit resume. Please try again.")
+      }
+    } catch (error) {
+      setResumeMessage("Failed to submit resume. Please check your connection and try again.")
+    } finally {
+      setResumeSubmitting(false)
+    }
+  }
+
+  const handleApplyNow = (jobTitle: string) => {
+    const subject = `Application for ${jobTitle} Position`
+    const body = `Dear Hiring Team,
+
+I am interested in applying for the ${jobTitle} position at Trivix Techno Skills. Please find my resume attached.
+
+Best regards,
+[Your Name]`
+
+    window.location.href = `mailto:niranjan@trivixtechnoskills.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  }
+
   const carouselSlides = [
     {
       title: "Press Tool Design Excellence",
@@ -1352,7 +1426,7 @@ export default function TrivixWebsite() {
                   </div>
                   <Button
                     className="w-full bg-trivix-blue hover:bg-blue-700 text-white border border-blue-200 shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl active:scale-95 relative overflow-hidden isolate z-10"
-                    onClick={() => scrollToSection("contact")}
+                    onClick={() => handleApplyNow(job.title)}
                     style={{ isolation: "isolate", position: "relative", backgroundColor: "rgb(30, 64, 175)" }}
                   >
                     <span
@@ -1384,7 +1458,7 @@ export default function TrivixWebsite() {
                 </p>
 
                 <Button
-                  onClick={() => scrollToSection("contact")}
+                  onClick={() => setShowResumeModal(true)}
                   className="bg-trivix-blue hover:bg-blue-700 text-white border border-blue-200 shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl active:scale-95 relative overflow-hidden isolate z-10"
                   style={{ isolation: "isolate", position: "relative", backgroundColor: "rgb(30, 64, 175)" }}
                 >
@@ -1661,6 +1735,112 @@ export default function TrivixWebsite() {
           </div>
         </div>
       </footer>
+
+      {showResumeModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-gray-900">Submit Your Resume</h3>
+                <button
+                  onClick={() => setShowResumeModal(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ×
+                </button>
+              </div>
+
+              <form onSubmit={handleResumeSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={resumeForm.name}
+                    onChange={(e) => setResumeForm({ ...resumeForm, name: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trivix-blue"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
+                  <input
+                    type="email"
+                    required
+                    value={resumeForm.email}
+                    onChange={(e) => setResumeForm({ ...resumeForm, email: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trivix-blue"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={resumeForm.phone}
+                    onChange={(e) => setResumeForm({ ...resumeForm, phone: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trivix-blue"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Position of Interest</label>
+                  <input
+                    type="text"
+                    value={resumeForm.position}
+                    onChange={(e) => setResumeForm({ ...resumeForm, position: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trivix-blue"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Resume File *</label>
+                  <input
+                    type="file"
+                    required
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => setResumeForm({ ...resumeForm, resume: e.target.files?.[0] || null })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trivix-blue"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Accepted formats: PDF, DOC, DOCX</p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Cover Message</label>
+                  <textarea
+                    rows={3}
+                    value={resumeForm.message}
+                    onChange={(e) => setResumeForm({ ...resumeForm, message: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-trivix-blue"
+                    placeholder="Tell us why you're interested in joining our team..."
+                  />
+                </div>
+
+                {resumeMessage && (
+                  <div
+                    className={`p-3 rounded-md text-sm ${
+                      resumeMessage.includes("successfully")
+                        ? "bg-green-50 text-green-700 border border-green-200"
+                        : "bg-red-50 text-red-700 border border-red-200"
+                    }`}
+                  >
+                    {resumeMessage}
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-4">
+                  <Button type="button" variant="outline" onClick={() => setShowResumeModal(false)} className="flex-1">
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={resumeSubmitting} className="flex-1 bg-trivix-blue hover:bg-blue-700">
+                    {resumeSubmitting ? "Submitting..." : "Submit Resume"}
+                  </Button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
