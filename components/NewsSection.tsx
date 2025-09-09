@@ -58,9 +58,7 @@ export default function NewsSection() {
   useEffect(() => {
     async function fetchArticles() {
       try {
-        console.log("[v0] Attempting to create Supabase client...")
         const supabase = createClient()
-        console.log("[v0] Supabase client created successfully")
 
         const { data, error } = await supabase
           .from("news_articles")
@@ -76,20 +74,16 @@ export default function NewsSection() {
             error.message.includes("schema cache") ||
             error.message.includes("news_articles")
           ) {
-            console.log("[v0] Database table 'news_articles' not found - setup scripts need to be run")
             setError("Database tables not created yet. Please run the setup scripts to enable dynamic content.")
           } else {
-            console.log("[v0] Database connection error, using fallback content")
             setError("Unable to connect to database. Showing sample content.")
           }
           setArticles(fallbackArticles)
         } else {
-          console.log("[v0] Successfully fetched news articles:", data?.length || 0)
           setArticles(data || fallbackArticles)
           setError(null)
         }
       } catch (err) {
-        console.log("[v0] Unexpected error occurred, using fallback content")
         setError("Unable to load articles. Showing sample content.")
         setArticles(fallbackArticles)
       } finally {
