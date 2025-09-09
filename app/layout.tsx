@@ -1,26 +1,19 @@
 import type React from "react"
-import "@/app/globals.css"
-import { Inter, Poppins } from "next/font/google"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils"
-import SmoothScroll from "@/components/smooth-scroll"
+import type { Metadata } from "next"
+import { Inter } from "next/font/google"
+import "./globals.css"
 
 const inter = Inter({
   subsets: ["latin"],
+  display: "swap",
   variable: "--font-inter",
 })
 
-const poppins = Poppins({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-  variable: "--font-poppins",
-})
-
-export const metadata = {
-  title: "Elevate Digital - Marketing & Branding Agency",
+export const metadata: Metadata = {
+  title: "Trivix Techno Skills Pvt. Ltd. - Engineering Excellence & Industrial Training",
   description:
-    "We don't just provide services; we forge partnerships. Digital marketing, branding, and tech solutions for businesses of all sizes.",
-    generator: 'v0.dev'
+    "Leading provider of press tool design, mould design, quality inspection, 3D printing services, and comprehensive industrial training programs.",
+  generator: "v0.app",
 }
 
 export default function RootLayout({
@@ -29,14 +22,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={cn("min-h-screen bg-gray-900 font-sans antialiased text-white", inter.variable, poppins.variable)}
-      >
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
-          <SmoothScroll>{children}</SmoothScroll>
-        </ThemeProvider>
-      </body>
+    <html lang="en" className={`${inter.variable} scroll-smooth`}>
+      <body className="font-sans antialiased">{children}</body>
     </html>
   )
 }
