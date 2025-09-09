@@ -58,16 +58,6 @@ export default function NewsSection() {
   useEffect(() => {
     async function fetchArticles() {
       try {
-        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-        const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-        if (!supabaseUrl || !supabaseKey) {
-          console.log("[v0] Supabase not configured, using fallback content")
-          setArticles(fallbackArticles)
-          setLoading(false)
-          return
-        }
-
         console.log("[v0] Attempting to create Supabase client...")
         const supabase = createClient()
         console.log("[v0] Supabase client created successfully")
