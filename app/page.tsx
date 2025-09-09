@@ -1119,25 +1119,22 @@ export default function TrivixWebsite() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
-                name: "Rajesh Kumar",
-                position: "Chief Executive Officer",
-                experience: "20+ years",
+                name: "Mr. Niranjan V. Somannavar",
+                position: "Founder & CEO",
+                experience: "5+ years",
                 expertise: "Strategic Leadership & Business Development",
-                image: "/professional-ceo-portrait.png",
               },
               {
-                name: "Priya Sharma",
-                position: "Head of Engineering",
-                experience: "15+ years",
-                expertise: "Tool Design & Manufacturing Excellence",
-                image: "/professional-female-engineer.png",
+                name: "Mr. Likhith Gowda",
+                position: "COO & Executive Director",
+                experience: "5+ years",
+                expertise: "Operations & Strategic Management",
               },
               {
-                name: "Amit Patel",
-                position: "Training Director",
-                experience: "12+ years",
-                expertise: "Industrial Training & Skill Development",
-                image: "/professional-training-director-portrait.png",
+                name: "Mr. Sudeep Patil",
+                position: "Engineer",
+                experience: "5+ years",
+                expertise: "Engineering Solutions & Technical Excellence",
               },
             ].map((leader, index) => (
               <Card
